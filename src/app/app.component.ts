@@ -4,12 +4,13 @@ import { RouterOutlet } from '@angular/router';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { FormsModule, NgForm } from '@angular/forms';
+import { HeaderComponent } from "../header/header.component";
 registerLocaleData(localeFr, 'fr');
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -43,7 +44,9 @@ export class AppComponent {
   }
 
   deleteItem(index: number) {
-    this.factures.splice(index, 1);
+    if(confirm("are you sure you want to delete ?")===true){
+      this.factures.splice(index, 1);
+    }
   }
 
   swipe() {
@@ -51,17 +54,28 @@ export class AppComponent {
   }
 
   addItem2(form: NgForm) {
-    this.factures.push({
-      numfact: this.factures.length + 1,
-      Date: form.value.dateFacture,
-      montant: form.value.montant,
-      etat: false,
-    });
-    this.dateFacture = '';
-    this.montant = 0;
-    this.show = false;
-
-    console.log(form.value);
-
+    if(this.montant!=0 && this.dateFacture!=""){
+      if (
+        confirm(
+          `N Facture : ${this.factures.length + 1}
+         Montnant : ${form.value.montant}
+         Date : ${form.value.dateFacture}
+        `
+        ) == true
+      ) {
+        this.factures.push({
+          numfact: this.factures.length + 1,
+          Date: form.value.dateFacture,
+          montant: form.value.montant,
+          etat: false,
+        });
+        this.dateFacture = '';
+        this.montant = 0;
+        this.show = false;
+      } else {
+      }
+    }else{
+      alert("bad informations")
+    }
   }
 }
