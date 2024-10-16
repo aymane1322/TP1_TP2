@@ -1,9 +1,10 @@
-
-<div style="display: flex; justify-content: space-between; width: 60vw;margin-left: 30px;">
-  <span style="font-weight: bold;">La liste des factures</span>
-  <span>Date : {{now | date:'d/M/y'}}</span>
+<div style="display: flex; justify-content: center; width: 100vw">
+  <div style="display: flex; justify-content: space-between; width: 60vw">
+    <span style="font-weight: bold">La liste des factures</span>
+    <span>Date : {{ now | date : "d/M/y" }}</span>
+  </div>
 </div>
-<hr>
+<hr />
 
 <table class="table table-striped">
   <thead>
@@ -12,22 +13,102 @@
       <th scope="col">Date Facture</th>
       <th scope="col">Montant</th>
       <th scope="col">Etat</th>
+      <th scope="col">Add</th>
+      <th scope="col">Delete</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let f of factures">
-      <th scope="row">{{f.numfact}}</th>
-      <td>{{f.Date | date:'dd/m/y'}}</td>
-      <td>{{f.montant | currency:'EUR' : 'symbol' :'1.0-2' :'fr'}}</td>
+    <tr *ngFor="let f of factures; index as pos">
+      <th scope="row">{{ f.numfact }}</th>
+      <td>{{ f.Date | date : "dd/m/y" }}</td>
+      <td>{{ f.montant | currency : "EUR" : "symbol" : "1.0-2" : "fr" }}</td>
       <td>
-
-        <span *ngIf="f.etat== true ,else bloc">payée</span>
-        <ng-template #bloc ><span style="color: red;">non payée</span></ng-template>
-
+        <span *ngIf="f.etat == true; else bloc">payée</span>
+        <ng-template #bloc>
+          <span style="color: red">non payée</span>
+          <!-- <span ngClass="{'className':true}">non payée</span> -->
+          <!-- <span [ngStyle]="{'color: f.etat?'red':'black'}">non payée</span> -->
+        </ng-template>
+      </td>
+      <td><button (click)="swipe()" class="btn btn-primary">add</button></td>
+      <td>
+        <button (click)="deleteItem(pos)" class="btn btn-danger">delete</button>
       </td>
     </tr>
-
   </tbody>
 </table>
+
+<div style="display: flex; justify-content: center; width: 100vw">
+  Total Montant :
+  {{ totalMontant() | currency : "EUR" : "symbol" : "1.0-2" : "fr" }}
+</div>
+
+<div
+  [ngStyle]="{ display: show ? 'flex' : 'none' }"
+  style="justify-content: space-evenly; width: 100vw; margin-top: 50px;"
+>
+<!-- Version 1  -->
+  <form>
+    <h2>formulaire de saisie de la Facture</h2>
+    <h3>(two way binding)</h3>
+    <div class="mb-3">
+      <label for="date" class="form-label">Montant Facture</label>
+      <input
+        name="montant"
+        min="0"
+        [(ngModel)]="montant"
+        type="number"
+        class="form-control"
+        id="date"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="date" class="form-label">Date Facture</label>
+      <input
+        name="dateFacture"
+        [(ngModel)]="dateFacture"
+        type="date"
+        class="form-control"
+        id="date"
+      />
+    </div>
+
+    <button (click)="addItem()" type="submit" class="btn btn-primary">
+      Submit
+    </button>
+  </form>
+<!-- Version 2  -->
+  <form #f = "ngForm" (ngSubmit)="addItem2(f)"> <!-- #f => reeference  local -->
+    <h2>formulaire de saisie de la Facture</h2>
+    <h3>(ngForm)</h3>
+    <div class="mb-3">
+      <label for="date" class="form-label">Montant Facture</label>
+      <input
+      [(ngModel)]="montant"
+        name="montant"
+        min="0"
+        type="number"
+        class="form-control"
+        id="date"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="date" class="form-label">Date Facture</label>
+      <input
+      [(ngModel)]="dateFacture"
+        name="dateFacture"
+        type="date"
+        class="form-control"
+        id="date"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      Submit
+    </button>
+  </form>
+</div>
 
 <router-outlet></router-outlet>
