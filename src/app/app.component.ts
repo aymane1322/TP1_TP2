@@ -60,5 +60,8 @@ export class AppComponent {
     this.dateFacture = '';
     this.montant = 0;
     this.show = false;
+
+    console.log(form.value);
+
   }
 }
